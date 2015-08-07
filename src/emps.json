@@ -1,0 +1,32 @@
+[
+  {
+    "id": 123,
+    "name" : "John Snow",
+    "Supervisor": null,
+    "Age": 16
+  },
+  {
+    "id": 222,
+    "name" : "Ned Stark",
+    "Supervisor": null,
+    "Age": 35
+  },
+  {
+    "id": 567,
+    "name" : "Rob Stark",
+    "Supervisor": 222,
+    "Age": 16
+  },
+  {
+    "id": 998,
+    "name" : "Yigritte",
+    "Supervisor": 222,
+    "Age": 20
+  },
+  {
+    "id": 445,
+    "name" : "Tyrion Lanister",
+    "Supervisor": 998,
+    "Age": 25
+  }
+]

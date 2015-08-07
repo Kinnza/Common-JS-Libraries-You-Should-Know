@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="main.css" />
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <title>JQuery exercise</title>
+</head>
+<body>
+    <h1>Employees</h1>
+    <table id="empsTable">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Supervisor</th>
+                <th>Age</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <br>
+    <div id="insertRow">
+        <input id="addId" placeholder="Id"/>
+        <input id="addName" placeholder="Name"/>
+        <select id="selectSupervisor">
+        </select>
+        <input id="addAge" placeholder="Age"/>
+        <button id="AddButton">Add</button>
+    </div>
+
+
+    <script>
+        var employees;
+
+
+        function findSupervisorsNames(data) {
+            // For each employee
+            for(var i=0; i< data.length;++i){
+                var supervisor = null;
+                // Go over the list and find the supervisor
+                for(var j=0; j< data.length;++j){
+                    if (data[i].Supervisor === data[j].id) {
+                        supervisor = data[j];
+                        break;
+                    }
+                }
+
+                // Set the actual data instead of the id
+                data[i].Supervisor = supervisor;
+            }
+            return data;
+        }
+
+        function createNewRow(emp,index){
+            return  $( "<tr></tr>")
+                    .append("<td>"+index+"</td>")
+                    .append("<td>"+emp.id+"</td>")
+                    .append("<td>"+emp.name+"</td>")
+                    .append("<td>"+ ( emp.Supervisor ? emp.Supervisor.name : 'None') +"</td>")
+                    .append("<td>"+emp.Age+"</td>");
+        }
+
+        function buildTable(employees) {
+
+            // First lets find our table body element
+            var tableBodyEl = $('#empsTable tbody');
+
+            // Go over the list of employess and append it to the table
+            for (var i=0;i<employees.length;++i){
+                var currEmp = employees[i];
+
+                // Creating a new row and appending the TDs with the data to it
+                var newRow = createNewRow(currEmp,i);
+                // A different approache to appending, append the new row to the table body element.
+                newRow.appendTo(tableBodyEl);
+            }
+        }
+
+        function buildSupervisorSelect(employees) {
+            // First lets find our table body element
+            var supervisorSelectEl = $('#selectSupervisor');
+
+            // Go over the list of employess and append it to the table
+            for (var i=0;i<employees.length;++i){
+                var currEmp = employees[i];
+
+                supervisorSelectEl.append("<option value='"+currEmp.id+"'>"+currEmp.name);
+            }
+        }
+
+        $(function() {
+            console.log( "ready!" );
+
+            // Get the emps.json file
+            $.ajax({
+                url: "emps.json",
+                type: "GET",
+                dataType : "json",
+                success: function( data ) {
+                    console.log('Got json data');
+
+                    // First lets process our data so we can access the supervisor details
+                    employees = findSupervisorsNames(data);
+
+                    buildTable(employees);
+                    buildSupervisorSelect(employees);
+                },
+                error: function( xhr, status, errorThrown ) {
+                    console.error('Errro has occured while getting employees file. Error is: '+errorThrown+", status: "+status);
+                },
+                complete: function( xhr, status ) {
+                    console.log('Request is done');
+                }
+            });
+
+            $( "#AddButton" ).on( "click", function() {
+                // Find the supervisor data by the supervisor id from the select
+                var selectedSupervisorId = Number($('#selectSupervisor').val());
+                var supervisor;
+                for(var i=0; i< employees.length;++i){
+                    if (employees[i].id === selectedSupervisorId) {
+                        supervisor = employees[i];
+                        break;
+                    }
+                }
+
+                // Creating the emp object
+                var empToAdd = {
+                    id: $('#addId').val(),
+                    name: $('#addName').val(),
+                    Age: $('#addAge').val(),
+                    Supervisor: supervisor
+                };
+
+                // Finding the number of rows, to add as index to the new row
+                var rowsNumber = $('#empsTable tbody tr').length;
+
+                // Create the new row
+                var addedRow = createNewRow(empToAdd,rowsNumber);
+
+                // Append it to our table
+                $('#empsTable tbody').append(addedRow);
+            });
+        });
+    </script>
+</body>
+</html>

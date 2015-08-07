@@ -1,0 +1,17 @@
+#empsTable {
+    border: 1px solid gray;
+    min-width: 700px;
+    padding: 5px;
+}
+
+#empsTable tr {
+    height: 30px;
+}
+
+#empsTable th {
+    border-bottom: 2px solid darkblue;
+}
+
+#empsTable td {
+    border-bottom: 1px solid lightblue;
+}
